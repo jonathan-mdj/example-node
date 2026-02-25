@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "test": "jest --verbose",
+    "test": "npx jest --verbose",
     "format": "prettier --write .",
     "lint": "eslint . ",
     "lint:fix": "eslint . --fix "
