@@ -3,7 +3,7 @@ import globals from 'globals'
 
 export default [
   {
-    ignores: ['eslint.config.mjs', 'node_modules']
+    ignores: ['eslint.config.mjs', 'node_modules','k6/**']
   },
   js.configs.recommended,
   {
