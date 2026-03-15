@@ -25,5 +25,4 @@ jobs:
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
         with:
           args: >
-            -Dsonar.projectKey=example-node
-            -Dsonar.qualitygate.wait=true
+            -Dsonar.projectKey=example-node            
