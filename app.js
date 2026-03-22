@@ -7,7 +7,30 @@ var indexRouter = require('./routes/index')
 var usersRouter = require('./routes/users')
 var itemsRouter = require('./routes/items')
 
+const client = require('prom-client')
+
 var app = express()
+
+// 1. Habilitar métricas por defecto de Node.js
+client.collectDefaultMetrics()
+
+// 2. Crear métricas personalizadas
+const httpRequestCounter = new client.Counter({
+  name: 'http_requests_total',
+  help: 'Total de peticiones HTTP procesadas',
+  labelNames: ['metodo', 'ruta', 'estado_http'],
+})
+
+const activeUsersGauge = new client.Gauge({
+  name: 'active_users_current',
+  help: 'Número actual de usuarios activos simulados'
+})
+
+// 3. Endpoint /metrics para Prometheus
+app.get('/metrics', async (req, res) => {
+  res.set('Content-Type', client.register.contentType)
+  res.send(await client.register.metrics())
+})
 
 app.use(logger('dev'))
 app.use(express.json())
