@@ -32,6 +32,18 @@ app.get('/metrics', async (req, res) => {
   res.send(await client.register.metrics())
 })
 
+// 4. Middleware para registrar peticiones
+app.use((req, res, next) => {
+  res.on('finish', () => {
+    httpRequestCounter.inc({
+      metodo: req.method,
+      ruta: req.path,
+      estado_http: res.statusCode.toString(),
+    })
+  })
+  next()
+})
+
 app.use(logger('dev'))
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
