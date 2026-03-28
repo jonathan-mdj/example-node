@@ -1,0 +1,31 @@
+name: Pipeline Principal CI/CD
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  sonarqube:
+    name: 1. Análisis de Calidad
+    uses: ./.github/workflows/sonar_analysis.yml
+    secrets: inherit
+
+  k6:
+    name: 2. Pruebas de Rendimiento
+    needs: sonarqube
+    uses: ./.github/workflows/k6.yml
+    secrets: inherit
+
+  nodejs-ci:
+    name: 3. Pruebas Unitarias
+    needs: k6
+    uses: ./.github/workflows/node.js.yml
+    secrets: inherit
+
+  deploy:
+    name: 4. Build y Deploy
+    needs: nodejs-ci
+    uses: ./.github/workflows/deploy.yml
+    secrets: inherit
