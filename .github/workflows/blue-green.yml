@@ -1,0 +1,36 @@
+name: Blue-Green Pipeline
+
+on:
+  workflow_dispatch:
+
+jobs:
+  blue-green-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Deploy Blue-Green via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.NGINX_HOST }}
+          username: ${{ secrets.NGINX_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            # Leer color actual
+            source /etc/nginx/current_deploy.env
+
+            # Determinar color opuesto
+            if [ "$CURRENT_COLOR" == "blue" ]; then
+              NEW_COLOR="green"
+            else
+              NEW_COLOR="blue"
+            fi
+
+            # Cambiar el switch
+            ~/link_switcher.sh $NEW_COLOR
+
+            # Actualizar el estado
+            echo "CURRENT_COLOR=$NEW_COLOR" > /etc/nginx/current_deploy.env
+
+            echo "Desplegado en: $NEW_COLOR"
